@@ -100,11 +100,15 @@ export default {
     font-size: 10pt;
   }
   button {
-    background-color: #f5f5f5;
-    padding: 10px;
+    background-color: #1a73e8;
+    padding: 15px;
     border-style: none;
+    font-size: 12pt;
+    color: white;
   }
   #login a{
     text-align: center;
+    text-decoration: underline;
+    color: black;
   }
 </style>
