@@ -30,7 +30,7 @@ export default {
       id: '',
       pw: '',
       submit: false,
-      result : false
+      result: false
     }
   },
   methods: {
@@ -45,7 +45,6 @@ export default {
         } else {
           this.result = true
         }
-
       } else {
         this.submit = true
       }

@@ -7,13 +7,13 @@
     </div>
     <div class="calendar">
       <div class="days">
-        <span class="day date" v-for="day in days">{{day}}</span>
+        <span class="day date" v-for="(day, index) in days" :key="index">{{day}}</span>
       </div>
       <div class="dates">
-        <div class="date lastDate"  v-for="i in thisMonthDate">
+        <div class="date lastDate"  v-for="i in thisMonthDate" :key="i">
           <span>{{i}}</span>
         </div>
-        <div class="date" v-for="i in lastDate">
+        <div class="date" v-for="i in lastDate" :key="i">
           <span>{{i}}</span>
         </div>
       </div>
@@ -25,31 +25,31 @@
 import eventBus from '../EventBus'
 export default {
   name: 'mini-calendar',
-  created: function() {
-    eventBus.$on('date-select',this.dateSelect)
+  created: function () {
+    eventBus.$on('date-select', this.dateSelect)
   },
   data: function () {
     return {
-      days: ['일','월','화','수','목','금','토'],
+      days: ['일', '월', '화', '수', '목', '금', '토'],
       today: new Date()
     }
   },
   computed: {
     header: function () {
-      return this.today.getFullYear() + "년 " + ( this.today.getMonth() + 1 ) + "월";
+      return this.today.getFullYear() + '년 ' + (this.today.getMonth() + 1) + '월'
     },
-    thisMonthDate : function() {
-      var doMonth = new Date(this.today.getFullYear(), this.today.getMonth(),1);
-      var nextMonth = new Date(this.today.getFullYear(), this.today.getMonth(),0);
-      var arr = [];
-      for(var i=nextMonth.getDate()-doMonth.getDay()+1; i<=nextMonth.getDate(); i++) {
-        arr.push(i);
+    thisMonthDate: function () {
+      var doMonth = new Date(this.today.getFullYear(), this.today.getMonth(), 1)
+      var nextMonth = new Date(this.today.getFullYear(), this.today.getMonth(), 0)
+      var arr = []
+      for (var i = nextMonth.getDate() - doMonth.getDay() + 1; i <= nextMonth.getDate(); i++) {
+        arr.push(i)
       }
-      return arr;
+      return arr
     },
-    lastDate : function () {
-      var lastDate = new Date(this.today.getFullYear(), this.today.getMonth()+1, 0);
-      return lastDate.getDate();
+    lastDate: function () {
+      var lastDate = new Date(this.today.getFullYear(), this.today.getMonth() + 1, 0)
+      return lastDate.getDate()
     }
   },
   methods: {
@@ -57,10 +57,10 @@ export default {
       this.today = new Date()
     },
     prevCalendar: function () {
-      this.today = new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate());
+      this.today = new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate())
     },
     nextCalendar: function () {
-      this.today = new Date(this.today.getFullYear(), this.today.getMonth() + 1, this.today.getDate());
+      this.today = new Date(this.today.getFullYear(), this.today.getMonth() + 1, this.today.getDate())
     },
     dateSelect: function () {
 

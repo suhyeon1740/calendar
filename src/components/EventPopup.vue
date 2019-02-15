@@ -22,8 +22,8 @@ import miniCalendar from './miniCalendar'
 export default {
   name: 'event-popup',
   components: { miniCalendar },
-  created: function() {
-    eventBus.$on('add-event',this.addEvent)
+  created: function () {
+    eventBus.$on('add-event', this.addEvent)
   },
   data: function () {
     return {
@@ -44,14 +44,14 @@ export default {
     addEvent: function (celTop, celLeft, celWidth) {
       // 팝업 스타일 설정
       this.popupDisplay = true
-        this.popupStyle.top = celTop+'px'
-        var left = celLeft + celWidth + 10; // 달력 칸 시작위치 + 칸 가로크기 + 여백
-        if (window.innerWidth - 390 < left) left = celLeft - 420 // 칸 시작위치 - 팝업 가로크기 - 여백
-        this.popupStyle.left = left +'px'
-        // 바 스타일 설정
-        this.eventBarStyle.width = celWidth + 'px'
-        this.eventBarStyle.left = celLeft + 'px'
-        this.eventBarStyle.top = celTop + 30 + 'px'
+      this.popupStyle.top = celTop + 'px'
+      var left = celLeft + celWidth + 10 // 달력 칸 시작위치 + 칸 가로크기 + 여백
+      if (window.innerWidth - 390 < left) left = celLeft - 420 // 칸 시작위치 - 팝업 가로크기 - 여백
+      this.popupStyle.left = left + 'px'
+      // 바 스타일 설정
+      this.eventBarStyle.width = celWidth + 'px'
+      this.eventBarStyle.left = celLeft + 'px'
+      this.eventBarStyle.top = celTop + 30 + 'px'
     },
     dateSelect: function () {
       this.miniCalendarDisplay = !this.miniCalendarDisplay
