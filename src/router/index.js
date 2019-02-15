@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
-import Calendar from '@/components/Calendar'
+import Calendar from '@/components/CalendarPage'
 import SignUp from '@/components/SignUp'
 
 Vue.use(Router)

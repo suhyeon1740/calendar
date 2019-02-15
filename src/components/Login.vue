@@ -71,7 +71,7 @@ export default {
     flex-direction: column;
     width: 470px;
     margin: 0 auto;
-    background-color: #f5f5f5;
+    /* background-color: #f5f5f5; */
     border: 2px solid #eee;
     padding: 10px 30px;
   }
@@ -84,6 +84,12 @@ export default {
     text-align: left;
     font-weight: bold;
     padding: 5px 0;
+    font-size: 15pt;
+  }
+  input {
+    font-size: 15pt;
+    color: rgba(33, 32, 36, 0.86);
+    padding: 5px 5px;
   }
   #login > div > * {
     margin: 10px 0;
@@ -94,8 +100,9 @@ export default {
     font-size: 10pt;
   }
   button {
-    background-color: white;
+    background-color: #f5f5f5;
     padding: 10px;
+    border-style: none;
   }
   #login a{
     text-align: center;

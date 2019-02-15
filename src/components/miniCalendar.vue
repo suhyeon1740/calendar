@@ -1,7 +1,6 @@
 <template lang="html">
   <div class="calendar_area">
     <div class="header">
-      <span class="today_btn" @click="todayCalendar">오늘</span>
       <span @click="prevCalendar">&#60;</span>
       <span @click="nextCalendar">&#62;</span>
       <span>{{header}}</span>
@@ -11,13 +10,11 @@
         <span class="day date" v-for="day in days">{{day}}</span>
       </div>
       <div class="dates">
-        <div class="date lastDate"  v-for="i in thisMonthDate" @click="addEvent">
-          <div>{{i}}</div>
+        <div class="date lastDate"  v-for="i in thisMonthDate">
+          <span>{{i}}</span>
         </div>
-        <div class="date" v-for="i in lastDate" @click="addEvent">
-          <div>
-            <span :class="todayDate(i)">{{i}}</span>
-          </div>
+        <div class="date" v-for="i in lastDate">
+          <span>{{i}}</span>
         </div>
       </div>
     </div>
@@ -27,7 +24,10 @@
 <script>
 import eventBus from '../EventBus'
 export default {
-  name: 'calendar',
+  name: 'mini-calendar',
+  created: function() {
+    eventBus.$on('date-select',this.dateSelect)
+  },
   data: function () {
     return {
       days: ['일','월','화','수','목','금','토'],
@@ -51,7 +51,6 @@ export default {
       var lastDate = new Date(this.today.getFullYear(), this.today.getMonth()+1, 0);
       return lastDate.getDate();
     }
-
   },
   methods: {
     todayCalendar: function () {
@@ -63,15 +62,8 @@ export default {
     nextCalendar: function () {
       this.today = new Date(this.today.getFullYear(), this.today.getMonth() + 1, this.today.getDate());
     },
-    addEvent: function (event) {
-      var celTop = event.target.offsetTop
-      var celLeft = event.target.offsetLeft
-      var celWidth = event.target.clientWidth
-      eventBus.$emit('add-event',celTop, celLeft, celWidth)
-    },
-    todayDate: function (date) {
-      var now = new Date();
-      if (now.getMonth() + 1 === this.today.getMonth() + 1 && date === now.getDate()) return {'today':true}
+    dateSelect: function () {
+
     }
   }
 }
@@ -79,16 +71,19 @@ export default {
 
 <style lang="css" scoped>
 .calendar_area {
-  width: 100%;
-  height: 100%;
+  background-color: white;
+  position: absolute;
+  width: 300px;
+  height: auto;
 }
 .right_area .header {
   height: 8%;
-  border-bottom: 1px solid #dadce0;
-  font-size: 20pt;
+  /* border-bottom: 1px solid #dadce0; */
+  font-size: 11pt;
   display: flex;
   align-items: center;
   color: #3c4043;
+  font-weight: bold;
 }
 .right_area .header > span {
   padding: 0 10px;
@@ -98,15 +93,8 @@ export default {
 .right_area .header > span:nth-child(4) {
   cursor: default;
 }
-.today_btn {
-  border: 1px solid #dadce0;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 15pt;
-  margin-left: 10px;
-}
 .calendar {
-  height: 92%;
+  /* height: 92%; */
   text-align: center;
 }
 .days {
@@ -119,12 +107,11 @@ export default {
 .date {
   width: calc(100% / 7 - 1px);
   float: left;
-  height: 20%;
+  /* height: 20%; */
   font-size: 10pt;
-  border-right: 1px solid #dadce0;
-  border-bottom: 1px solid #dadce0;
 }
-.date div {
+.date span {
+  display: block;
   padding: 10px;
 }
 .day {
@@ -133,12 +120,5 @@ export default {
 }
 .lastDate {
   color: #dadce0;
-}
-.today {
-  background: #1a73e8;
-  padding: 4px 6px;
-  border-radius: 50%;
-  color: white;
-  font-weight: bold;
 }
 </style>
