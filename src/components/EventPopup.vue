@@ -3,7 +3,7 @@
     <div class="event_popup" :style="popupStyle">
       <input type="text" name="" value="" placeholder="제목" autofocus>
       <div class="date_select">
-        <span @click="dateSelect" @blur="miniCalendarDisplay=false">2019년 2월 14일</span> - <span @click="dateSelect">2019년 2월 14일</span>
+        <span @click="dateSelect" @blur="miniCalendarDisplay=false" v-model="sdate">20190214</span> - <span @click="dateSelect" v-model="edate">20190214</span>
         <mini-calendar v-show="miniCalendarDisplay"></mini-calendar>
       </div>
       <div class="save_btn">
@@ -23,7 +23,7 @@ export default {
   name: 'event-popup',
   components: { miniCalendar },
   created: function () {
-    eventBus.$on('add-event', this.addEvent)
+    eventBus.$on('add-event', this.showPopup)
   },
   data: function () {
     return {
@@ -37,11 +37,16 @@ export default {
         top: 0,
         left: 0
       },
-      miniCalendarDisplay: false
+      miniCalendarDisplay: false,
+      eventInfo: {
+        sdate: '2019-02-14',
+        edate: '2019-02-14'
+      }
     }
   },
+  props: ['userNo'],
   methods: {
-    addEvent: function (celTop, celLeft, celWidth) {
+    showPopup: function (celTop, celLeft, celWidth, userNo) {
       // 팝업 스타일 설정
       this.popupDisplay = true
       this.popupStyle.top = celTop + 'px'
@@ -52,6 +57,25 @@ export default {
       this.eventBarStyle.width = celWidth + 'px'
       this.eventBarStyle.left = celLeft + 'px'
       this.eventBarStyle.top = celTop + 30 + 'px'
+    },
+    addEvent: function () {
+      this.$http.post('/api/calendar/add', { //axios 사용
+        sdate: this.eventInfo.sdate,
+        edate: this.eventInfo.edate,
+        title: this.eventInfo.title,
+        userNo: this.userNo
+      })
+      .then((response) => {
+        if (response.data.result === 0) {
+          alert('일정 추가에 실패하였습니다')
+        }
+        if (response.data.result === 1) {
+          this.popupDisplay = false
+        }
+      })
+      .catch(function (error) {
+        alert('error')
+      })
     },
     dateSelect: function () {
       this.miniCalendarDisplay = !this.miniCalendarDisplay

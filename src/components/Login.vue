@@ -39,12 +39,29 @@ export default {
       this.result = false
       // 계정 확인
       if (this.id && this.pw) {
-        if (this.id === 'admin' && this.pw === 'admin') {
-          this.result = false
-          this.$router.push({ name: 'Calendar', params: {} })
-        } else {
-          this.result = true
-        }
+        this.$http.post('/api/login', { //axios 사용
+          id: this.id,
+          pw: this.pw
+        })
+        .then((response) => {
+          if (response.data.result === 0) {
+            this.result = true
+          }
+          if (response.data.result === 1) {
+            this.result = false
+            this.$router.push({ name: 'Calendar', params: {nickname:response.data.nickname} })
+          }
+        })
+        .catch(function (error) {
+          alert('error')
+        })
+
+        // if (this.id === 'admin' && this.pw === 'admin') {
+        //   this.result = false
+        //   this.$router.push({ name: 'Calendar', params: {} })
+        // } else {
+        //   this.result = true
+        // }
       } else {
         this.submit = true
       }

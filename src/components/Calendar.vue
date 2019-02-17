@@ -11,10 +11,10 @@
         <span class="day date" v-for="(day,index) in days" :key="index">{{day}}</span>
       </div>
       <div class="dates">
-        <div class="date lastDate"  v-for="i in thisMonthDate" @click="addEvent" :key="i">
+        <div class="date lastDate"  v-for="i in thisMonthDate" @click="addEvent" >
           <div>{{i}}</div>
         </div>
-        <div class="date" v-for="i in lastDate" @click="addEvent" :key="i">
+        <div class="date" v-for="i in lastDate" @click="addEvent" >
           <div>
             <span :class="todayDate(i)">{{i}}</span>
           </div>
@@ -34,6 +34,7 @@ export default {
       today: new Date()
     }
   },
+  props: ['userNo'],
   computed: {
     header: function () {
       return this.today.getFullYear() + '년 ' + (this.today.getMonth() + 1) + '월'
@@ -66,7 +67,7 @@ export default {
       var celTop = event.target.offsetTop
       var celLeft = event.target.offsetLeft
       var celWidth = event.target.clientWidth
-      eventBus.$emit('add-event', celTop, celLeft, celWidth)
+      eventBus.$emit('add-event', celTop, celLeft, celWidth, userNo)
     },
     todayDate: function (date) {
       var now = new Date()

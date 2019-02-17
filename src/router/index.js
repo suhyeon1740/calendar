@@ -14,7 +14,7 @@ export default new Router({
       component: Login
     },
     {
-      path: '/calendar',
+      path: '/calendar/:nickname',
       name: 'Calendar',
       component: Calendar
     },

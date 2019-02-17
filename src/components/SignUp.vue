@@ -6,7 +6,7 @@
         <label for="id">아이디</label>
         <input type="text" name="id" value="" v-model="id" @keyup.enter="signUp">
         <div class="error" v-show="!id && submit">아이디를 입력하세요</div>
-        <div class="error" v-show="false">이미 존재하는 아이디입니다</div>
+        <div class="error" v-show="idCheck">이미 존재하는 아이디입니다</div>
       </div>
       <div class="flex">
         <label for="pw">비밀번호</label>
@@ -16,13 +16,13 @@
       <div class="flex">
         <label for="pwCheck">비밀번호확인</label>
         <input type="password" name="pwCheck" value="" v-model="pwCheck" @keyup.enter="signUp">
-        <div class="error" v-show="pwCheck && pw!=pwCheck && submit">비밀번호가 일치하지 않습니다</div>
+        <div class="error" v-show="pwCheck && confirmPw && pwCheck.length>0 ">비밀번호가 일치하지 않습니다</div>
         <div class="error" v-show="!pwCheck && submit">비밀번호 확인을 위해 다시한번 입력 해 주세요</div>
       </div>
       <div class="flex">
         <label for="name">닉네임</label>
-        <input type="text" name="name" value="" v-model="name" @keyup.enter="signUp">
-        <div class="error" v-show="!name && submit">닉네임을 입력하세요</div>
+        <input type="text" name="name" value="" v-model="nickname" @keyup.enter="signUp">
+        <div class="error" v-show="!nickname && submit">닉네임을 입력하세요</div>
       </div>
       <div class="">
         <button type="button" class="button" @click="signUp">회원가입</button>
@@ -40,16 +40,38 @@ export default {
       id: '',
       pw: '',
       pwCheck: '',
-      name: '',
-      submit: false
+      nickname: '',
+      submit: false,
+      idCheck: false
+    }
+  },
+  computed: {
+    confirmPw: function () {
+      if (this.pw!=this.pwCheck) return true
+      else return false
     }
   },
   methods: {
     signUp: function () {
       this.submit = true
-      if (this.id && this.pw && this.pwCheck && this.name) {
-        alert('가입되었습니다')
-        this.$router.push({ name: 'Login', params: {} })
+      if (this.id && this.pw && this.pwCheck && this.nickname) {
+        this.$http.post('/api/login/signUp', { //axios 사용
+          id: this.id,
+          pw: this.pw,
+          nickname: this.nickname
+        })
+        .then((response) => {
+          if (response.data.result === 0) {
+            this.idCheck = true
+          }
+          if (response.data.result === 1) {
+            alert('가입되었습니다')
+            this.$router.push({ name: 'Login', params: {} })
+          }
+        })
+        .catch(function (error) {
+          alert('error')
+        })
       }
     },
     cancel: function () {

@@ -10,10 +10,10 @@
         <span class="day date" v-for="(day, index) in days" :key="index">{{day}}</span>
       </div>
       <div class="dates">
-        <div class="date lastDate"  v-for="i in thisMonthDate" :key="i">
+        <div class="date lastDate"  v-for="i in thisMonthDate" >
           <span>{{i}}</span>
         </div>
-        <div class="date" v-for="i in lastDate" :key="i">
+        <div class="date" v-for="i in lastDate">
           <span>{{i}}</span>
         </div>
       </div>

@@ -3,7 +3,7 @@
     <div class="left_area flex">
       <div class="nickname_area">
         <span class="logout_btn"><router-link :to="{ name: 'Login', params: {} }">로그아웃</router-link></span>
-        <span class="nickname">admin</span>
+        <span class="nickname">{{$route.params.nickname}}</span>
       </div>
       <div class="notice_area">
         <div class="notice">
@@ -28,7 +28,12 @@ import EventPopup from './EventPopup.vue'
 import Calendar from './Calendar.vue'
 export default {
   name: 'calendarPage',
-  components: { EventPopup, Calendar }
+  components: { EventPopup, Calendar },
+  data: function () {
+    return {
+      userNo: $route.params.userNo
+    }
+  }
 }
 </script>
 
