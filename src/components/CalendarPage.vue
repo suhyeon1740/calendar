@@ -17,8 +17,8 @@
       </div>
     </div>
     <div class="right_area">
-      <calendar></calendar>
-      <event-popup></event-popup>
+      <calendar :userNo="userNo"></calendar>
+      <event-popup :userNo="userNo"></event-popup>
     </div>
   </div>
 </template>
@@ -31,7 +31,7 @@ export default {
   components: { EventPopup, Calendar },
   data: function () {
     return {
-      userNo: $route.params.userNo
+      userNo: this.$route.params.userNo
     }
   }
 }
@@ -72,6 +72,7 @@ export default {
 }
 .left_area .notice {
   height: 92%;
+  padding: 2px 10px;
 }
 .right_area{
   width: 80%;

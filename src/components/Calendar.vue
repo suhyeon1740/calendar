@@ -11,12 +11,15 @@
         <span class="day date" v-for="(day,index) in days" :key="index">{{day}}</span>
       </div>
       <div class="dates">
-        <div class="date lastDate"  v-for="i in thisMonthDate" @click="addEvent" >
+        <div class="date lastDate"  v-for="i in thisMonthDate" @click="addEvent($event,i)" >
           <div>{{i}}</div>
         </div>
-        <div class="date" v-for="i in lastDate" @click="addEvent" >
+        <div class="date" v-for="i in lastDate" @click.self="addEvent($event,i)" >
           <div>
             <span :class="todayDate(i)">{{i}}</span>
+          </div>
+          <div v-if="allEvent[i]" class="event_bar" @click="viewEvent($event,i)" :style="barStyle" ref="bar">
+            {{allEvent[i].title}}
           </div>
         </div>
       </div>
@@ -31,10 +34,35 @@ export default {
   data: function () {
     return {
       days: ['일', '월', '화', '수', '목', '금', '토'],
-      today: new Date()
+      today: new Date(),
+      allEvent: [],
+      barStyle: {
+        position: 'static'
+      }
     }
   },
   props: ['userNo'],
+  created () {
+    this.$http.post('/api/calendar/get', {
+      userNo: this.userNo,
+      year: this.today.getFullYear(),
+      month: this.today.getMonth() + 1
+    }).then((response) => {
+      if (response.data.result === 0) {
+        alert('일정 조회에 실패하였습니다')
+      }
+      if (response.data.result === 1) {
+        for (var i = 0; i < response.data.rows.length; i++) {
+          var arr = [];
+          var date = response.data.rows[i].sdate.substr(8,2)
+          this.$set(this.allEvent, date, response.data.rows[i])
+        }
+      }
+    }).catch(function (error) {
+      alert(error)
+    })
+    eventBus.$on('save-event', this.getEvents)
+  },
   computed: {
     header: function () {
       return this.today.getFullYear() + '년 ' + (this.today.getMonth() + 1) + '월'
@@ -56,24 +84,57 @@ export default {
   methods: {
     todayCalendar: function () {
       this.today = new Date()
+      this.getEvents()
     },
     prevCalendar: function () {
       this.today = new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate())
+      this.getEvents()
     },
     nextCalendar: function () {
       this.today = new Date(this.today.getFullYear(), this.today.getMonth() + 1, this.today.getDate())
+      this.getEvents()
     },
-    addEvent: function (event) {
+    addEvent: function (event, date) {
       var celTop = event.target.offsetTop
       var celLeft = event.target.offsetLeft
       var celWidth = event.target.clientWidth
-      eventBus.$emit('add-event', celTop, celLeft, celWidth, userNo)
+      var month = this.today.getMonth() + 1
+      eventBus.$emit('add-event', celTop, celLeft, celWidth, date, month)
+    },
+    viewEvent: function (event, date) {
+      var celTop = event.target.offsetTop
+      var celLeft = event.target.offsetLeft
+      var celWidth = event.target.clientWidth
+      var bar = event.target
+      var title = this.allEvent[date].title
+      eventBus.$emit('view-event', celTop, celLeft, celWidth, bar, title)
     },
     todayDate: function (date) {
       var now = new Date()
       if (now.getMonth() + 1 === this.today.getMonth() + 1 && date === now.getDate()) {
         return { 'today': true }
       }
+    },
+    getEvents: function () {
+      this.allEvent = [];
+      this.$http.post('/api/calendar/get', {
+        userNo: this.userNo,
+        year: this.today.getFullYear(),
+        month: this.today.getMonth() + 1
+      }).then((response) => {
+        if (response.data.result === 0) {
+          alert('일정 조회에 실패하였습니다')
+        }
+        if (response.data.result === 1) {
+          for (var i = 0; i < response.data.rows.length; i++) {
+            var arr = [];
+            var date = response.data.rows[i].sdate.substr(8,2)
+            this.$set(this.allEvent, date, response.data.rows[i])
+          }
+        }
+      }).catch(function (error) {
+        alert(error)
+      })
     }
   }
 }
@@ -142,5 +203,17 @@ export default {
   border-radius: 50%;
   color: white;
   font-weight: bold;
+}
+.event_bar {
+  background: rgb(3, 155, 229);
+  height: 20px;
+  color: white;
+  font-size: 10pt;
+  text-align: left;
+  padding: 0 10px;
+  box-sizing: border-box;
+  line-height: 1pt;
+  margin-bottom: 2px;
+  cursor: pointer;
 }
 </style>

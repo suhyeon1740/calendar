@@ -1,13 +1,15 @@
 <template lang="html">
-  <div class="event_popup_area" v-show="popupDisplay" @click.self="popupDisplay=false">
+  <div class="event_popup_area" v-show="popupDisplay" @click.self="closePopup">
     <div class="event_popup" :style="popupStyle">
-      <input type="text" name="" value="" placeholder="제목" autofocus>
+      <input type="text" name="" value="" placeholder="제목" autofocus v-model="eventInfo.title">
       <div class="date_select">
-        <span @click="dateSelect" @blur="miniCalendarDisplay=false" v-model="sdate">20190214</span> - <span @click="dateSelect" v-model="edate">20190214</span>
+        <span @click="dateSelect" @blur="miniCalendarDisplay=false">{{eventInfo.sdate}}</span>
+         -
+         <span @click="dateSelect">{{eventInfo.edate}}</span>
         <mini-calendar v-show="miniCalendarDisplay"></mini-calendar>
       </div>
       <div class="save_btn">
-        <span>저장</span>
+        <span @click="addEvent">저장</span>
       </div>
     </div>
     <div class="event_bar" :style="eventBarStyle">
@@ -22,8 +24,10 @@ import miniCalendar from './miniCalendar'
 export default {
   name: 'event-popup',
   components: { miniCalendar },
+  props: ['userNo'],
   created: function () {
     eventBus.$on('add-event', this.showPopup)
+    eventBus.$on('view-event',this.viewEvent)
   },
   data: function () {
     return {
@@ -39,14 +43,15 @@ export default {
       },
       miniCalendarDisplay: false,
       eventInfo: {
-        sdate: '2019-02-14',
-        edate: '2019-02-14'
-      }
+        sdate: '2019-2-14 00:00:00',
+        edate: '2019-2-14 00:00:00',
+        title: ''
+      },
+      activeBar: ''
     }
   },
-  props: ['userNo'],
   methods: {
-    showPopup: function (celTop, celLeft, celWidth, userNo) {
+    showPopup: function (celTop, celLeft, celWidth, date, month) {
       // 팝업 스타일 설정
       this.popupDisplay = true
       this.popupStyle.top = celTop + 'px'
@@ -57,25 +62,49 @@ export default {
       this.eventBarStyle.width = celWidth + 'px'
       this.eventBarStyle.left = celLeft + 'px'
       this.eventBarStyle.top = celTop + 30 + 'px'
+      this.eventBarStyle.display = ''
+      this.eventInfo.sdate = '2019-'+month+'-'+date+' 00:00:00'
+      this.eventInfo.edate = '2019-'+month+'-'+date+' 00:00:00'
+    },
+    closePopup: function () {
+      this.popupDisplay = false
+      this.activeBar.style.position = 'static'
     },
     addEvent: function () {
-      this.$http.post('/api/calendar/add', { //axios 사용
+      this.$http.post('/api/calendar/add', {
         sdate: this.eventInfo.sdate,
         edate: this.eventInfo.edate,
         title: this.eventInfo.title,
         userNo: this.userNo
-      })
-      .then((response) => {
+      }).then((response) => {
         if (response.data.result === 0) {
           alert('일정 추가에 실패하였습니다')
         }
         if (response.data.result === 1) {
           this.popupDisplay = false
+          this.eventInfo.title = ''
+          eventBus.$emit('save-event')
         }
+      }).catch(function (error) {
+        alert(error)
       })
-      .catch(function (error) {
-        alert('error')
-      })
+    },
+    viewEvent: function(celTop, celLeft, celWidth, bar, title) {
+      // 팝업 스타일 설정
+      this.popupDisplay = true
+      this.popupStyle.top = celTop + 'px'
+      var left = celLeft + celWidth + 10 // 달력 칸 시작위치 + 칸 가로크기 + 여백
+      if (window.innerWidth - 390 < left) left = celLeft - 420 // 칸 시작위치 - 팝업 가로크기 - 여백
+      this.popupStyle.left = left + 'px'
+      this.eventBarStyle.display = 'none'
+      // bar 스타일 설정
+      bar.style.position = "absolute"
+      bar.style.width = celWidth + 'px'
+      // bar.style.zIndex= 999
+      this.activeBar = bar
+      this.eventInfo.title = title
+
+
     },
     dateSelect: function () {
       this.miniCalendarDisplay = !this.miniCalendarDisplay

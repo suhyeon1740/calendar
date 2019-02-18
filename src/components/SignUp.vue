@@ -47,7 +47,7 @@ export default {
   },
   computed: {
     confirmPw: function () {
-      if (this.pw!=this.pwCheck) return true
+      if (this.pw !== this.pwCheck) return true
       else return false
     }
   },
@@ -55,12 +55,11 @@ export default {
     signUp: function () {
       this.submit = true
       if (this.id && this.pw && this.pwCheck && this.nickname) {
-        this.$http.post('/api/login/signUp', { //axios 사용
+        this.$http.post('/api/login/signUp', {
           id: this.id,
           pw: this.pw,
           nickname: this.nickname
-        })
-        .then((response) => {
+        }).then((response) => {
           if (response.data.result === 0) {
             this.idCheck = true
           }
@@ -68,9 +67,8 @@ export default {
             alert('가입되었습니다')
             this.$router.push({ name: 'Login', params: {} })
           }
-        })
-        .catch(function (error) {
-          alert('error')
+        }).catch(function (error) {
+          alert(error)
         })
       }
     },
@@ -123,5 +121,10 @@ label {
   text-align: left;
   color : #ff1616;
   font-size: 10pt;
+}
+input {
+  font-size: 15pt;
+  color: rgba(33, 32, 36, 0.86);
+  padding: 5px 5px;
 }
 </style>
