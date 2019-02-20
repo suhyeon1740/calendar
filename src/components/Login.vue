@@ -33,13 +33,23 @@ export default {
       result: false
     }
   },
+  created () {
+    this.$http.get('/api/login').then((response) => {      
+      if(response) this.$router.push({
+        name: 'Calendar',
+        params: { nickname: response.data.nickname, userNo: response.data.no }
+      })
+    }).catch(function (error) {
+      alert(error)
+    })
+  },
   methods: {
     login: function () {
       this.submit = false
       this.result = false
       // 계정 확인
       if (this.id && this.pw) {
-        this.$http.post('/api/login', {
+        this.$http.post('/api/login/login', {
           id: this.id,
           pw: this.pw
         }).then((response) => {
@@ -50,7 +60,7 @@ export default {
             this.result = false
             this.$router.push({
               name: 'Calendar',
-              params: { nickname: response.data.nickname, userNo: response.data.userNo } 
+              params: { nickname: response.data.nickname, userNo: response.data.userNo }
             })
           }
         }).catch(function (error) {

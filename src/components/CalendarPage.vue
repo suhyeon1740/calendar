@@ -33,6 +33,15 @@ export default {
     return {
       userNo: this.$route.params.userNo
     }
+  },
+  created () {
+    this.$http.get('/api/calendar/').then((response) => {
+      if(response) {
+        this.userNo = response.data.no;
+      }
+    }).catch(function (error) {
+      alert(error)
+    })
   }
 }
 </script>
